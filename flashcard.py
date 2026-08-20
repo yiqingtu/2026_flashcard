@@ -6,49 +6,16 @@ import random
 
 st.set_page_config(page_title="IT‑AI Flashcard SRS", layout="wide")
 
-vocab_data = [
-    {
-        "id": "card‑001",
-        "chinese": "智能代理",
-        "english": "AI Agent",
-        "context": "LLM / AI",
-        "example": "Agent executes multi‑step tool calls."
-    },
-    {
-        "id": "card‑002",
-        "chinese": "检索增强生成",
-        "english": "RAG Retrieval‑Augmented Generation",
-        "context": "LLM",
-        "example": "RAG injects external knowledge into prompt context."
-    },
-    {
-        "id": "card‑003",
-        "chinese": "词嵌入",
-        "english": "Word Embedding",
-        "context": "NLP",
-        "example": "Embedding maps text into numerical vector space."
-    },
-    {
-        "id": "card‑004",
-        "chinese": "上下文窗口",
-        "english": "Context Window",
-        "context": "LLM",
-        "example": "Large context window allows processing long documents."
-    },
-    {
-        "id": "card‑005",
-        "chinese": "微调",
-        "english": "Fine‑tuning",
-        "context": "LLM",
-        "example": "Fine‑tuning adapts base model for domain‑specific tasks."
-    }
-]
+# Load word bank from separate data.json
+with open("data.json", "r", encoding="utf‑8") as f:
+    vocab_data = json.load(f)
 
 BOX_INTERVALS = {1: 1, 2: 2, 3: 4, 4: 7, 5: 14}
 
-# Sync states: add new vocab entries automatically
+# Sync logic: auto add any new card id from data.json into session state
 if "card_states" not in st.session_state:
     st.session_state.card_states = {}
+
 for card in vocab_data:
     cid = card["id"]
     if cid not in st.session_state.card_states:
@@ -79,7 +46,6 @@ def handle_review(card_id: str, remembered_correct: bool):
     interval_days = BOX_INTERVALS[state["box"]]
     state["nextReview"] = now + timedelta(days=interval_days)
 
-
 st.title("🇨🇳🇬🇧 IT‑AI Flashcards | 5‑Box Leitner SRS")
 
 with st.expander("💾 Save / Load review progress (export JSON file)"):
@@ -109,7 +75,7 @@ st.divider()
 due_list = get_due_cards()
 random.shuffle(due_list)
 
-with st.expander("Debug due list"):
+with st.expander("🔍 Debug due list"):
     st.write(f"Total due: {len(due_list)}")
     for item in due_list:
         st.write(f"{item['card']['chinese']}, box:{item['state']['box']}, nextReview:{item['state']['nextReview']}")
@@ -119,6 +85,7 @@ with st.sidebar:
     for box_num in range(1, 6):
         count = sum(1 for s in st.session_state.card_states.values() if s["box"] == box_num)
         st.markdown(f"Box {box_num}  `{BOX_INTERVALS[box_num]}d` : **{count} cards**")
+    st.markdown(f"Total words in bank: {len(vocab_data)}")
     st.warning("⚠️ Refresh / sleep loses progress, export JSON before close.")
 
 if not due_list:

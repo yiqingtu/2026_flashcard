@@ -33,5 +33,12 @@
         "english": "Fine‑tuning",
         "context": "LLM",
         "example": "Fine‑tuning adapts base model for domain‑specific tasks."
+    },
+    {
+        "id": "card‑006",
+        "chinese": "轶清",
+        "english": "Yiqing",
+        "context": "LLM",
+        "example": "Fine‑tuning adapts base model for domain‑specific tasks."
     }
 ]
