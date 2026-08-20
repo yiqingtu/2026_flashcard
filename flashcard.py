@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 import json
 from io import StringIO
+import random
 
 st.set_page_config(page_title="IT‑AI Flashcard SRS", layout="wide")
 
@@ -39,16 +40,18 @@ vocab_data = [
         "chinese": "微调",
         "english": "Fine‑tuning",
         "context": "LLM",
-        "example": "Fine‑tuning adapts base model to domain‑specific tasks."
+        "example": "Fine‑tuning adapts base model for domain‑specific tasks."
     }
 ]
 
 BOX_INTERVALS = {1: 1, 2: 2, 3: 4, 4: 7, 5: 14}
 
+# Sync states: add new vocab entries automatically
 if "card_states" not in st.session_state:
     st.session_state.card_states = {}
-    for card in vocab_data:
-        cid = card["id"]
+for card in vocab_data:
+    cid = card["id"]
+    if cid not in st.session_state.card_states:
         st.session_state.card_states[cid] = {
             "box": 1,
             "lastReviewed": None,
@@ -76,6 +79,7 @@ def handle_review(card_id: str, remembered_correct: bool):
     interval_days = BOX_INTERVALS[state["box"]]
     state["nextReview"] = now + timedelta(days=interval_days)
 
+
 st.title("🇨🇳🇬🇧 IT‑AI Flashcards | 5‑Box Leitner SRS")
 
 with st.expander("💾 Save / Load review progress (export JSON file)"):
@@ -96,16 +100,26 @@ with st.expander("💾 Save / Load review progress (export JSON file)"):
             st.session_state.card_states = loaded_states
             st.success("Progress loaded ✔")
 
+if st.button("⚠️ Reset ALL progress (test only)"):
+    st.session_state.card_states = {}
+    st.rerun()
+
 st.divider()
 
 due_list = get_due_cards()
+random.shuffle(due_list)
+
+with st.expander("Debug due list"):
+    st.write(f"Total due: {len(due_list)}")
+    for item in due_list:
+        st.write(f"{item['card']['chinese']}, box:{item['state']['box']}, nextReview:{item['state']['nextReview']}")
 
 with st.sidebar:
     st.subheader("📊 Box Status")
     for box_num in range(1, 6):
         count = sum(1 for s in st.session_state.card_states.values() if s["box"] == box_num)
         st.markdown(f"Box {box_num}  `{BOX_INTERVALS[box_num]}d` : **{count} cards**")
-    st.warning("⚠️ Refresh / reopen page loses progress — export JSON before closing.")
+    st.warning("⚠️ Refresh / sleep loses progress, export JSON before close.")
 
 if not due_list:
     st.success("✅ No cards due for review, come back later.")
