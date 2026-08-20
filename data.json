@@ -1,0 +1,37 @@
+[
+    {
+        "id": "card‑001",
+        "chinese": "智能代理",
+        "english": "AI Agent",
+        "context": "LLM / AI",
+        "example": "Agent executes multi‑step tool calls."
+    },
+    {
+        "id": "card‑002",
+        "chinese": "检索增强生成",
+        "english": "RAG Retrieval‑Augmented Generation",
+        "context": "LLM",
+        "example": "RAG injects external knowledge into prompt context."
+    },
+    {
+        "id": "card‑003",
+        "chinese": "词嵌入",
+        "english": "Word Embedding",
+        "context": "NLP",
+        "example": "Embedding maps text into numerical vector space."
+    },
+    {
+        "id": "card‑004",
+        "chinese": "上下文窗口",
+        "english": "Context Window",
+        "context": "LLM",
+        "example": "Large context window allows processing long documents."
+    },
+    {
+        "id": "card‑005",
+        "chinese": "微调",
+        "english": "Fine‑tuning",
+        "context": "LLM",
+        "example": "Fine‑tuning adapts base model for domain‑specific tasks."
+    }
+]
